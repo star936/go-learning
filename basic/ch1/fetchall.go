@@ -19,7 +19,7 @@ func main() {
 	for range os.Args[1:] {
 		fmt.Println(<-ch)
 	}
-	fmt.Sprintf("%.2fs elapsed\n", time.Since(start).Seconds())
+	fmt.Println(fmt.Sprintf("%.2fs elapsed\n", time.Since(start).Seconds()))
 }
 
 func fetch(url string, ch chan<- string) {
