@@ -13,10 +13,10 @@ import (
 // walkDir 递归地遍历以dir为根目录的整个文件树
 // 并在fileSizes上发送每个已找到的文件的大小
 func walkDirV2(dir string, fileSizes chan<- int64)  {
-	for _, entry := range dirents(dir) {
+	for _, entry := range direntsV2(dir) {
 		if entry.IsDir() {
 			subDir := filepath.Join(dir, entry.Name())
-			walkDir(subDir, fileSizes)
+			walkDirV2(subDir, fileSizes)
 		} else {
 			fileSizes <- entry.Size()
 		}
@@ -50,7 +50,7 @@ func main() {
 	// 遍历文件树
 	go func() {
 		for _, root := range roots {
-			walkDir(root, fileSizes)
+			walkDirV2(root, fileSizes)
 		}
 		close(fileSizes)
 	}()
@@ -74,6 +74,6 @@ func main() {
 				printV2(nfiles, nbytes)
 			}
 		}
-		print(nfiles, nbytes)
+		printV2(nfiles, nbytes)
 }
 
