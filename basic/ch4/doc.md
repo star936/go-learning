@@ -9,3 +9,36 @@
 * net/url
   
 其中`chunked`包可以被`net/http`、`net/http/httputil`包导入，而不能被`net/url`导入.
+
+
+### defer
+
+#### 触发时机
+
+1. 包裹着defer语句的函数返回时
+2. 包裹着defer语句的函数执行到最后时
+3. 当前goroutine发生Panic时
+
+#### return，defer，返回值的执行顺序
+
+1. 先给返回值赋值
+2. 执行defer语句
+3. 包裹函数return返回
+
+**例子分析:**
+
+```go
+func f() int { //匿名返回值
+	var r int = 6
+	defer func() {
+		fmt.Printf("r=%d\n", r)
+		r *= 7
+		fmt.Printf("r=%d\n", r)
+	}()
+	return r
+}
+```
+
+**输出结果: 6**
+
+**分析: `f函数`是匿名返回值，匿名返回值是在return执行时被声明；因此defer声明时，还不能访问匿名返回值，所以defer的修改不会影响到返回值.**
